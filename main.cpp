@@ -7,22 +7,23 @@
 
 using namespace std;
 
+const long double maxVel = 1;
 const long double G = 6.6743e-11; // Gravitational constant
+const long double hitBox = 35;    // Hit box size
 Vec2 oCoords(-1, -1);
 const static Vec2 offset(-24, -28);
 const Vec2 range(0, 2e+7);
 // const Vec2 offset(0, 0);
 
-
-int random(Vec2 minMax) //range : [min, max]
+int random(Vec2 minMax) // range : [min, max]
 {
-   static bool first = true;
-   if (first) 
-   {  
-      srand( time(NULL) ); //seeding for the first time only!
-      first = false;
-   }
-   return (int)minMax.x + rand() % (( (int)minMax.y + 1 ) - (int)minMax.x);
+    static bool first = true;
+    if (first)
+    {
+        srand(time(NULL)); // seeding for the first time only!
+        first = false;
+    }
+    return minMax.x + rand() % (((int)minMax.y + 1) - (int)minMax.x);
 }
 
 class movingEntity
@@ -36,14 +37,14 @@ public:
     movingEntity()
     {
         pos = oCoords + offset;
-        vel = Vec2(0, 0);
+        vel = Vec2(random(Vec2(-maxVel, maxVel)), random(Vec2(-maxVel, maxVel)));
         mass = random(range);
     }
 
     movingEntity(Vec2 p)
     {
         pos = p;
-        vel = Vec2(0, 0);
+        vel = Vec2(random(Vec2(-maxVel, maxVel)), random(Vec2(-maxVel, maxVel)));
         mass = random(range);
     }
 
@@ -72,7 +73,7 @@ public:
     }
 
     void push(Vec2 aceleration, long double dt = 1)
-    {   
+    {
         if (aceleration.x != 0)
         {
             vel.x += aceleration.x * dt;
@@ -94,27 +95,27 @@ Vec2 gravity(movingEntity entity1, movingEntity entity2)
 {
     long double fG = G * (entity1.mass * entity2.mass) / pow(entity1.pos.length(entity2.pos), 2);
 
-
-
     return (entity2.pos - entity1.pos) * fG;
 }
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,
-                            HDC      hdcMonitor,
-                            LPRECT   lprcMonitor,
-                            LPARAM   dwData)
+                              HDC hdcMonitor,
+                              LPRECT lprcMonitor,
+                              LPARAM dwData)
 {
     MONITORINFO info;
     info.cbSize = sizeof(info);
     if (GetMonitorInfo(hMonitor, &info))
     {
-        if (oCoords.x == -1) {
+        if (oCoords.x == -1)
+        {
             oCoords = Vec2(abs(info.rcMonitor.left), abs(info.rcMonitor.top));
         }
     }
 }
 
-void getOriginCoords() {
+void getOriginCoords()
+{
 
     EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 }
@@ -165,7 +166,7 @@ public:
     desktop()
     {
         getOriginCoords();
-        
+
         // desktopSize = Vec2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
         // desktopSize = getDesktopSize();
 
@@ -223,6 +224,11 @@ public:
         icons[i].mass = m;
     }
 
+    void velIcon(int i, Vec2 v)
+    {
+        icons[i].vel = v;
+    }
+
     void update()
     {
         for (int i = 0; i < iconCount; i++)
@@ -231,7 +237,7 @@ public:
         }
     }
 
-    void orbit(long double dt = 1)
+    void physics(long double dt = 1)
     {
         for (int i = 0; i < iconCount; i++)
         {
@@ -241,10 +247,26 @@ public:
                 {
                     continue;
                 }
-                if (i != j)
+                else if (i != j)
                 {
-                    Vec2 aceleration = gravity(icons[i], icons[j]);
-                    icons[i].push(aceleration, dt);
+                    if (icons[i].pos.length(icons[j].pos) >= hitBox)
+                    {
+                        Vec2 aceleration = gravity(icons[i], icons[j]);
+                        icons[i].push(aceleration, dt);
+                    }
+                    else
+                    {
+                        if (j != 0)
+                        {
+                            Vec2 movementQuantity = icons[i].vel * icons[i].mass + icons[j].vel * icons[j].mass;
+                            icons[i].vel -= movementQuantity / icons[i].mass;
+                            icons[j].vel -= movementQuantity / icons[j].mass;
+                        }
+                        else
+                        {
+                            icons[i].vel = icons[i].vel * -1;
+                        }
+                    }
                 }
             }
         }
@@ -302,21 +324,22 @@ int main()
     }
     d.update();
 
-    char c;
-    cout << "Waiting for a letter to start..." << endl;
-    cin >> c;
+    // char c;
+    // cout << "Waiting for a letter to start..." << endl;
+    // cin >> c;
 
     // d.icons[d.iconCount].mass = range.y * 100;
     d.moveIcon(0, Vec2((int)(oCoords.x + offset.x + 1920 / 2), (int)(oCoords.y + offset.y + 1080 / 2)));
-    d.massIcon(0, range.y);
+    d.massIcon(0, range.y / 10);
 
-    POINT px;
+    // POINT px;
 
     while (true)
     {
         // GetCursorPos(&px);
         // d.icons[d.iconCount].setPos(Vec2(px.x, px.y));
-        d.orbit();
+        d.velIcon(0, Vec2(0, 0));
+        d.physics();
 
         // cout << "Cursor position: " << d.icons[d.iconCount].pos.x << ", " << d.icons[d.iconCount].pos.y << " and mass " << d.icons[d.iconCount].mass << endl;
 
