@@ -19,7 +19,7 @@
 class Vec2
 {
 public:
-    float x, y;
+    long double x, y;
 
     Vec2()
     {
@@ -27,20 +27,20 @@ public:
         y = 0;
     }
 
-    Vec2(float xN, float yN)
+    Vec2(long double xN, long double yN)
     {
         x = xN;
         y = yN;
     }
 
     // Squared Euclidean length.
-    double lengthSquared(const Vec2 &other) const
+    long double lengthSquared(const Vec2 &other) const
     {
-        return other.x * other.x + other.y * other.y;
+        return (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
     }
 
     // The Euclidean length.
-    double length(const Vec2 &other) const
+    long double length(const Vec2 &other) const
     {
         return sqrt(lengthSquared(other));
     }
@@ -75,13 +75,13 @@ public:
     }
 
     // Scalar multiplication.
-    Vec2 operator*(float n)
+    Vec2 operator*(long double n)
     {
         return Vec2(x * n, y * n);
     }
 
     // Division by a scalar.
-    Vec2 operator/(float n)
+    Vec2 operator/(long double n)
     {
         return Vec2(x / n, y / n);
     }
