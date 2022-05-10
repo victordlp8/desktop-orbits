@@ -218,6 +218,11 @@ public:
         ListView_SetItemPosition(hd, i, (int)icons[i].pos.x - offset.x, (int)icons[i].pos.y - offset.y);
     }
 
+    void massIcon(int i, long double m)
+    {
+        icons[i].mass = m;
+    }
+
     void update()
     {
         for (int i = 0; i < iconCount; i++)
@@ -232,6 +237,10 @@ public:
         {
             for (int j = 0; j < iconCount; j++)
             {
+                if (i == 0)
+                {
+                    continue;
+                }
                 if (i != j)
                 {
                     Vec2 aceleration = gravity(icons[i], icons[j]);
@@ -285,18 +294,21 @@ int main()
     cout << "Icon count: " << d.iconCount << endl;
     cout << "Coordenadas origin: " << oCoords.x << ", " << oCoords.y << endl;
 
-    // for (int i = 0; i < d.iconCount; i++)
-    // {
-    //     d.setIconPos(i, Vec2(1920/2 + oCoords.x + offset.x + i * 50, 1080/2 + oCoords.y + offset.y + i * 30));
-    //     // d.setIconPos(i, offset);
-    // }
-    // d.update();
+    for (int i = 0; i < d.iconCount; i++)
+    {
+        d.moveIcon(i, Vec2((int)(oCoords.x + offset.x + random(Vec2(0, 1920))), (int)(oCoords.y + offset.y + random(Vec2(0, 1080)))));
+        // d.setIconPos(i, Vec2(1920/2 + oCoords.x + offset.x + i * 50, 1080/2 + oCoords.y + offset.y + i * 30));
+        // d.setIconPos(i, offset);
+    }
+    d.update();
 
     char c;
     cout << "Waiting for a letter to start..." << endl;
     cin >> c;
 
     // d.icons[d.iconCount].mass = range.y * 100;
+    d.moveIcon(0, Vec2((int)(oCoords.x + offset.x + 1920 / 2), (int)(oCoords.y + offset.y + 1080 / 2)));
+    d.massIcon(0, range.y);
 
     POINT px;
 
