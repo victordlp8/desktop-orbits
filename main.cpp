@@ -141,6 +141,15 @@ public:
         }
     }
 
+    long double bounceAngle(const movingEntity &other) const
+    {
+        long double aEntry = vel.angle();
+        long double aBetween = pos.angle(other.pos);
+        long double aExit = PI - aEntry + (PI / 2 - aBetween);
+
+        return aExit;
+    }
+
     // void update(HWND hd, long double dt = 1)
     // {
     //     pos += vel * dt;
@@ -173,7 +182,6 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,
 
 void getOriginCoords()
 {
-
     EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 }
 
@@ -306,18 +314,30 @@ public:
                 }
                 else if (i != j)
                 {
-                    if (icons[i].pos.length(icons[j].pos) >= hitBox)
+                    if (icons[i].pos.length(icons[j].pos) >= 2 * hitBox)
                     {
                         Vec2 aceleration = gravity(icons[i], icons[j]);
                         icons[i].push(aceleration, dt);
                     }
                     else
                     {
-                        if (j != 0)
+                        long double aExit_i = icons[i].bounceAngle(icons[j]);
+                        long double vEntry_i = icons[i].vel.module();
+                        Vec2 vExit_i(vEntry_i * cos(aExit_i), vEntry_i * sin(aExit_i));
+                        icons[i].vel = vExit_i;
+
+                        if (true)
                         {
-                            Vec2 movementQuantity = icons[i].vel * icons[i].mass + icons[j].vel * icons[j].mass;
-                            icons[i].vel -= movementQuantity / icons[i].mass;
-                            icons[j].vel -= movementQuantity / icons[j].mass;
+                            continue;
+
+                            // long double aExit_j = icons[j].bounceAngle(icons[i]);
+                            // long double vEntry_j = icons[j].vel.module();
+                            // Vec2 vExit_j(vEntry_j * cos(aExit_j), vEntry_j * sin(aExit_j));
+                            // icons[j].vel = vExit_j;
+
+                            // Vec2 movementQuantity = icons[i].vel * icons[i].mass + icons[j].vel * icons[j].mass;
+                            // icons[i].vel -= movementQuantity / icons[i].mass;
+                            // icons[j].vel -= movementQuantity / icons[j].mass;
                         }
                         else
                         {
