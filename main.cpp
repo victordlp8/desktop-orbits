@@ -3,17 +3,74 @@
 #include "Vec2.h"
 #include <vector>
 #include <iostream>
+#include <string>
+#include <fstream>
 #include <time.h>
+#include "include/Vec2.h"
+#include "include/json.hpp"
 
+using json = nlohmann::json;
 using namespace std;
 
-const long double maxVel = 1;
-const long double G = 6.6743e-11; // Gravitational constant
-const long double hitBox = 35;    // Hit box size
-Vec2 oCoords(-1, -1);
-const static Vec2 offset(-24, -28);
-const Vec2 range(0, 2e+7);
-// const Vec2 offset(0, 0);
+long double _pi()
+{
+    return atan(1) * 4;
+}
+
+bool loadJson(json &json_data, const char *fileName)
+{
+    ifstream json_file(fileName);
+    string json_string, line;
+    if (json_file.is_open())
+    {
+        while (getline(json_file, line))
+        {
+            json_string += line + '\n';
+        }
+        json_file.close();
+
+        json_data = json::parse(json_string);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+long double PI;
+long double maxVel;
+long double G;      // Gravitational constant
+long double hitBox; // Hit box size
+Vec2 oCoords;
+Vec2 offset;
+Vec2 massRange;
+
+const char *cfg_path = "config.json";
+bool loadConfig(const char *cfg_path)
+{
+    json cfg;
+    if (loadJson(cfg, cfg_path))
+    {
+        cout << "Config loaded successfully." << endl;
+
+        PI = _pi();
+        maxVel = cfg["maxVel"];
+        G = cfg["G_const"];
+        hitBox = cfg["hitBox"];
+        oCoords = Vec2(cfg["oCoords"][0], cfg["oCoords"][1]);
+        offset = Vec2(cfg["offset"][0], cfg["offset"][1]);
+        massRange = Vec2(cfg["massRange"][0], cfg["massRange"][1]);
+
+        return true;
+    }
+    else
+    {
+        cout << "Config loading failed." << endl;
+        return false;
+    }
+}
 
 int random(Vec2 minMax) // range : [min, max]
 {
@@ -38,14 +95,14 @@ public:
     {
         pos = oCoords + offset;
         vel = Vec2(random(Vec2(-maxVel, maxVel)), random(Vec2(-maxVel, maxVel)));
-        mass = random(range);
+        mass = random(massRange);
     }
 
     movingEntity(Vec2 p)
     {
         pos = p;
         vel = Vec2(random(Vec2(-maxVel, maxVel)), random(Vec2(-maxVel, maxVel)));
-        mass = random(range);
+        mass = random(massRange);
     }
 
     movingEntity(Vec2 p, Vec2 v, long double m)
@@ -306,6 +363,8 @@ public:
 
 int main()
 {
+    loadConfig(cfg_path);
+
     /*POINT pt;
     ListView_GetItemPosition(hd, 0, pC);
     ReadProcessMemory(he, pC, &pt, sizeof(POINT), NULL);
@@ -330,7 +389,7 @@ int main()
 
     // d.icons[d.iconCount].mass = range.y * 100;
     d.moveIcon(0, Vec2((int)(oCoords.x + offset.x + 1920 / 2), (int)(oCoords.y + offset.y + 1080 / 2)));
-    d.massIcon(0, range.y / 10);
+    d.massIcon(0, massRange.y / 10);
 
     // POINT px;
 
