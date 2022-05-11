@@ -45,6 +45,21 @@ public:
         return sqrt(lengthSquared(other));
     }
 
+    long double module() const
+    {
+        return sqrt(x * x + y * y);
+    }
+
+    long double angle() const
+    {
+        return atan2(y, x);
+    }
+
+    long double angle(const Vec2 &other) const
+    {
+        return atan2(other.y - y, other.x - x);
+    }
+
     Vec2 operator=(const Vec2 &other)
     {
         x = other.x;
