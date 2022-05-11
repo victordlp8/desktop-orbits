@@ -1,11 +1,11 @@
 #include <windows.h>
 #include <commctrl.h>
-#include "Vec2.h"
 #include <vector>
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <time.h>
+#include <cmath>
 #include "include/Vec2.h"
 #include "include/json.hpp"
 
