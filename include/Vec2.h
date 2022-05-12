@@ -14,6 +14,9 @@
 
 #include <iostream>
 #include <cmath>
+#include "polarCoords2.h"
+
+long double Vec2_PI = atan(1) * 4;
 
 // Vec2 allows public access to its two data members: x and y.
 class Vec2
@@ -21,46 +24,70 @@ class Vec2
 public:
     long double x, y;
 
-    Vec2()
+    inline Vec2()
     {
         x = 0;
         y = 0;
     }
 
-    Vec2(long double xN, long double yN)
+    inline Vec2(long double xN, long double yN)
     {
         x = xN;
         y = yN;
     }
 
     // Squared Euclidean length.
-    long double lengthSquared(const Vec2 &other) const
+    inline long double lengthSquared(const Vec2 &other) const
     {
         return (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
     }
 
     // The Euclidean length.
-    long double length(const Vec2 &other) const
+    inline long double length(const Vec2 &other) const
     {
         return sqrt(lengthSquared(other));
     }
 
-    long double module() const
+    inline long double module() const
     {
         return sqrt(x * x + y * y);
     }
 
-    long double angle() const
+    inline long double angle() const
     {
-        return atan2(y, x);
+        if (x == 0 && y == 0)
+        {
+            return 0;
+        }
+        else if (x > 0 && y == 0)
+        {
+            return 0;
+        }
+        else if (x < 0 && y == 0)
+        {
+            return Vec2_PI;
+        }
+        else if (x == 0 && y > 0)
+        {
+            return Vec2_PI / 2;
+        }
+        else if (x == 0 && y < 0)
+        {
+            return 3 * Vec2_PI / 2;
+        }
+        else if (x > 0 && y > 0)
+        {
+            return atan2(y, x);
+        }
     }
 
-    long double angle(const Vec2 &other) const
+    inline long double angle(const Vec2 &other) const
     {
-        return atan2(other.y - y, other.x - x);
+        Vec2 temp(other.x - x, other.y - y);
+        return temp.angle();
     }
 
-    Vec2 operator=(const Vec2 &other)
+    inline Vec2 operator=(const Vec2 &other)
     {
         x = other.x;
         y = other.y;
@@ -68,7 +95,7 @@ public:
     }
 
     // Vector addition.
-    Vec2 operator+(const Vec2 &other)
+    inline Vec2 operator+(const Vec2 &other)
     {
         x += other.x;
         y += other.y;
@@ -76,7 +103,7 @@ public:
     }
 
     // Vector subtraction.
-    Vec2 operator-(const Vec2 &other)
+    inline Vec2 operator-(const Vec2 &other)
     {
         x -= other.x;
         y -= other.y;
@@ -84,19 +111,19 @@ public:
     }
 
     // Unary minus.
-    Vec2 operator-()
+    inline Vec2 operator-()
     {
         return Vec2(-x, -y);
     }
 
     // Scalar multiplication.
-    Vec2 operator*(long double n)
+    inline Vec2 operator*(long double n)
     {
         return Vec2(x * n, y * n);
     }
 
     // Division by a scalar.
-    Vec2 operator/(long double n)
+    inline Vec2 operator/(long double n)
     {
         return Vec2(x / n, y / n);
     }
@@ -111,7 +138,7 @@ public:
     // }
 
     // Increment one vector by another.
-    Vec2 &operator+=(const Vec2 &other)
+    inline Vec2 &operator+=(const Vec2 &other)
     {
         x += other.x;
         y += other.y;
@@ -119,7 +146,7 @@ public:
     }
 
     // Decrement one vector by another.
-    Vec2 &operator-=(const Vec2 &other)
+    inline Vec2 &operator-=(const Vec2 &other)
     {
         x -= other.x;
         y -= other.y;
@@ -139,6 +166,14 @@ public:
     //     out << "(" << other.x << ", " << other.y << ") ";
     //     return out;
     // }
+
+    friend std::ostream &operator<<(std::ostream &out, const Vec2 &other);
 };
+
+std::ostream &operator<<(std::ostream &out, const Vec2 &other)
+{
+    out << "(" << other.x << ", " << other.y << ") ";
+    return out;
+}
 
 #endif
