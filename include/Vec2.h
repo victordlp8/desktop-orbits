@@ -55,30 +55,7 @@ public:
 
     inline long double angle() const
     {
-        if (x == 0 && y == 0)
-        {
-            return 0;
-        }
-        else if (x > 0 && y == 0)
-        {
-            return 0;
-        }
-        else if (x < 0 && y == 0)
-        {
-            return Vec2_PI;
-        }
-        else if (x == 0 && y > 0)
-        {
-            return Vec2_PI / 2;
-        }
-        else if (x == 0 && y < 0)
-        {
-            return 3 * Vec2_PI / 2;
-        }
-        else if (x > 0 && y > 0)
-        {
-            return atan2(y, x);
-        }
+        return atan2(y, x);
     }
 
     inline long double angle(const Vec2 &other) const
@@ -95,37 +72,48 @@ public:
     }
 
     // Vector addition.
-    inline Vec2 operator+(const Vec2 &other)
+    inline Vec2 operator+(const Vec2 &other) const
     {
-        x += other.x;
-        y += other.y;
-        return *this;
+        Vec2 result;
+        result.x = x + other.x;
+        result.y = y + other.y;
+        return result;
     }
 
     // Vector subtraction.
-    inline Vec2 operator-(const Vec2 &other)
+    inline Vec2 operator-(const Vec2 &other) const
     {
-        x -= other.x;
-        y -= other.y;
-        return *this;
+        Vec2 result;
+        result.x = x - other.x;
+        result.y = y - other.y;
+        return result;
     }
 
     // Unary minus.
-    inline Vec2 operator-()
+    inline Vec2 operator-() const
     {
-        return Vec2(-x, -y);
+        Vec2 result;
+        result.x = -x;
+        result.y = -y;
+        return result;
     }
 
     // Scalar multiplication.
-    inline Vec2 operator*(long double n)
+    inline Vec2 operator*(long double scalar) const
     {
-        return Vec2(x * n, y * n);
+        Vec2 result;
+        result.x = x * scalar;
+        result.y = y * scalar;
+        return result;
     }
 
     // Division by a scalar.
-    inline Vec2 operator/(long double n)
+    inline Vec2 operator/(long double scalar) const
     {
-        return Vec2(x / n, y / n);
+        Vec2 result;
+        result.x = x / scalar;
+        result.y = y / scalar;
+        return result;
     }
 
     // // Compute the cross product of the 3D vectors formed

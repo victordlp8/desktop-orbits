@@ -48,12 +48,20 @@ public:
     {
         r = 0;
         theta = 0;
+        correct();
     }
 
     inline polarCoords2(long double rN, long double thetaN)
     {
         r = rN;
         theta = thetaN;
+        correct();
+    }
+
+    inline polarCoords2(const polarCoords2 &other)
+    {
+        r = other.r;
+        theta = other.theta;
         correct();
     }
 
@@ -72,26 +80,23 @@ public:
         return *this;
     }
 
-    inline polarCoords2 operator+(const polarCoords2 &other)
+    inline polarCoords2 operator+(const polarCoords2 &other) const
     {
-        r = sqrt(pow(r, 2) + 2 * r * other.r * cos(other.theta - theta) + pow(other.r, 2));
-        theta = theta + atan((other.r * sin(other.theta - theta)) / (r + other.r * cos(other.theta - theta)));
-        correct();
-        return *this;
+        polarCoords2 result(*this);
+        result.r = sqrt(pow(r, 2) + 2 * r * other.r * cos(other.theta - theta) + pow(other.r, 2));
+        result.theta = theta + atan2((other.r * sin(other.theta - theta)), (r + other.r * cos(other.theta - theta)));
+        result.correct();
+        return result;
     }
 
-    inline polarCoords2 operator-(const polarCoords2 &other)
+    inline polarCoords2 operator-(const polarCoords2 &other) const
     {
         return operator+(other * -1);
     }
 
     inline polarCoords2 operator*(long double scalar) const
     {
-        polarCoords2 result;
-        result.r = r * scalar;
-        result.theta = theta;
-        result.correct();
-        return result;
+        return polarCoords2(r * scalar, theta);
     }
 
     inline polarCoords2 operator*(const polarCoords2 &other) const
@@ -101,7 +106,7 @@ public:
 
     inline polarCoords2 operator/(long double scalar) const
     {
-        return operator*(1 / scalar);
+        return polarCoords2(r / scalar, theta);
     }
 
     inline polarCoords2 operator/(const polarCoords2 &other) const
@@ -111,22 +116,38 @@ public:
 
     inline polarCoords2 operator+=(const polarCoords2 &other)
     {
-        return operator+(other);
+        *this = *this + other;
+        return *this;
     }
 
     inline polarCoords2 operator-=(const polarCoords2 &other)
     {
-        return operator-(other);
+        *this = *this - other;
+        return *this;
     }
 
     inline polarCoords2 operator*=(long double scalar)
     {
-        return operator*(scalar);
+        *this = *this * scalar;
+        return *this;
+    }
+
+    inline polarCoords2 operator*=(const polarCoords2 &other)
+    {
+        *this = *this * other;
+        return *this;
     }
 
     inline polarCoords2 operator/=(long double scalar)
     {
-        return operator/(scalar);
+        *this = *this / scalar;
+        return *this;
+    }
+
+    inline polarCoords2 operator/=(const polarCoords2 &other)
+    {
+        *this = *this / other;
+        return *this;
     }
 
     inline bool operator==(const polarCoords2 &other) const
