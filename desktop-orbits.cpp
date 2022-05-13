@@ -39,10 +39,10 @@ bool loadConfig(const char *cfg_path)
         orbVel_modifier = cfg["orbVel_modifier"];
         G = cfg["G_const"];
         hitBox = cfg["hitBox"];
-        oCoords = toPolarCoords(vector_2D(cfg["oCoords"][0], cfg["oCoords"][1]));
-        offset = toPolarCoords(vector_2D(cfg["offset"][0], cfg["offset"][1]));
+        oCoords = toPolarCoords({cfg["oCoords"][0], cfg["oCoords"][1]});
+        offset = toPolarCoords({cfg["offset"][0], cfg["offset"][1]});
 
-        massRange = vector_2D(cfg["massRange"][0], cfg["massRange"][1]);
+        massRange = {cfg["massRange"][0], cfg["massRange"][1]};
         massSun = cfg["massSun"];
 
         physics_per_second = cfg["physics_per_second"];
@@ -259,9 +259,10 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,
     {
         if (oCoords.r <= 1 && oCoords.r != 0)
         {
+            vector_2D mainMonitor(info.rcMonitor.right - info.rcMonitor.left, info.rcMonitor.bottom - info.rcMonitor.top);
             oCoords = toPolarCoords(vector_2D(abs(info.rcMonitor.left), abs(info.rcMonitor.top)));
+            oCoords += toPolarCoords(mainMonitor / 2);
             oCoords += offset;
-            oCoords += toPolarCoords(vector_2D(1920 / 2, 1080 / 2));
         }
     }
 }
