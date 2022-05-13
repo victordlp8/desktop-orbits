@@ -1,8 +1,8 @@
 {
     "maxVel": 1,
-    "G_const": 6.6743e-11,
+    "G_const": -6.6743e-11,
     "hitBox": 25,
-    "oCoords": [-1, -1],
-    "offset": [0, 0],
+    "oCoords": [1, 0],
+    "offset": [-24, -28],
     "massRange": [0, 2e+7]
 }
