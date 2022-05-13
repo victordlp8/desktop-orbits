@@ -2,11 +2,7 @@
 #include <commctrl.h>
 #include <vector>
 #include <iostream>
-#include <string>
-#include <fstream>
-#include <time.h>
 #include <cmath>
-#include <random>
 #include "include/aux_functions.h"
 #include "include/json.hpp"
 #include "include/movingEntity_2D.h"
@@ -250,7 +246,7 @@ int main()
         if (random({-1, 1}) < 0) angle += PI;
 
         d.setIconVel(i, polarForm_2D(velocity, angle));
-        
+
         d.setIconMass(i, random(massRange));
     }
     d.update();
