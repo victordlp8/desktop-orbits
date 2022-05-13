@@ -365,18 +365,14 @@ int main()
 
     for (int i = 1; i < d.iconCount; i++)
     {
-        // d.moveIcon(i, oCoords + offset + toPolarCoords(Vec2(random(Vec2(0, 1920)), random(Vec2(0, 1080)))));
         d.moveIcon(i, oCoords + toPolarCoords(Vec2(random(Vec2(-1920/2, 1920/2)), random(Vec2(-1080/2, 1080/2)))));
 
         // Smart orbit velocity calculation
-        long double velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * 150;
-        if (random({-1, 1}) < 0) velocity *= -1;
+        long double velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * 100;
         long double angle = (d.icons[i].pos - d.icons[0].pos).theta + PI/2;
+        if (random({-1, 1}) < 0) angle += PI;
 
         d.velIcon(i, polarCoords2(velocity, angle));
-
-        // d.setIconPos(i, Vec2(1920/2 + oCoords.x + offset.x + i * 50, 1080/2 + oCoords.y + offset.y + i * 30));
-        // d.setIconPos(i, offset);
     }
     d.update();
 
