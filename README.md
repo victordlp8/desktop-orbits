@@ -15,6 +15,8 @@ This project uses the following public code:
 - [polarCoords2] - C++ polar form vectors simple class
 
 ## Installation
+Unlock desktop icons. [Quick tutorial if you don't know how]
+
 Download the *_READY.zip file on the version release of your choice.
 Unzip the file and execute the executable.
 
@@ -27,3 +29,4 @@ Hay que decidirla todavia
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
    [nlohmann/json]: <https://github.com/nlohmann/json>
+   [Quick tutorial if you don't know how]: <https://bit.ly/3wuATdM>
