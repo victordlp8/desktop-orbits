@@ -21,7 +21,12 @@ vector_2D massRange;         // The range of mass that the icons should have
 long double massSun;         // Mass of the center icon icon
 int physics_per_second;      // How many times the physics should be calculated in a second
 
-const char *cfg_path = "config.json";
+/**
+ * @brief Loads the data from the config into the variables
+ *
+ * @param cfg_path
+ * @return true/false depending on whether the data was loaded successfully or not
+ */
 bool loadConfig(const char *cfg_path)
 {
     json cfg;
@@ -50,6 +55,13 @@ bool loadConfig(const char *cfg_path)
     }
 }
 
+/**
+ * @brief Calculates the gravity force between to movingEntity_2D objects
+ *
+ * @param entity1
+ * @param entity2
+ * @return polarForm_2D returns the force between the two entities
+ */
 polarForm_2D gravity(movingEntity_2D entity1, movingEntity_2D entity2)
 {
     long double fG_r = G * (entity1.mass * entity2.mass) / pow((entity1.pos - entity2.pos).r, 2);
@@ -58,6 +70,9 @@ polarForm_2D gravity(movingEntity_2D entity1, movingEntity_2D entity2)
     return polarForm_2D(fG_r, fG_theta);
 }
 
+/**
+ * @brief Desktop object that contains the icons and functions to manipulate them
+ */
 class desktop
 {
 private:
@@ -78,6 +93,9 @@ public:
     int iconCount;
     vector<movingEntity_2D> icons;
 
+    /**
+     * @brief Construct a new desktop object initalizing the icons
+     */
     desktop()
     {
 
@@ -92,44 +110,69 @@ public:
         WriteProcessMemory(he, pC, &pC, sizeof(POINT), NULL);
 
         iconCount = SendMessage(hd, LVM_GETITEMCOUNT, 0, 0);
-
-        POINT pt;
         for (int i = 0; i < iconCount; i++)
-        {
-            ListView_GetItemPosition(hd, i, pC);
-            ReadProcessMemory(he, pC, &pt, sizeof(POINT), NULL);
             icons.push_back(movingEntity_2D());
-        }
     }
 
+    /**
+     * @brief Move the icon to the new position that the velocity dictates
+     *
+     * @param i Index of the icon
+     */
     void moveIcon(int i)
     {
         icons[i].pos += icons[i].vel;
         _ListView_SetItemPosition(i, icons[i].pos);
     }
 
+    /**
+     * @brief Sets the position of the icon to the new position
+     *
+     * @param i Index of the icon
+     * @param p New position of the icon
+     */
     void setIconPos(int i, polarForm_2D p)
     {
         icons[i].pos = p;
         _ListView_SetItemPosition(i, icons[i].pos);
     }
 
+    /**
+     * @brief Sets the velocity of the icon to the new velocity
+     *
+     * @param i Index of the icon
+     * @param v New velocity of the icon
+     */
     void setIconVel(int i, polarForm_2D v)
     {
         icons[i].vel = v;
     }
 
+    /**
+     * @brief Sets the mass of the icon to the new mass
+     *
+     * @param i Index of the icon
+     * @param m New mass of the icon
+     */
     void setIconMass(int i, long double m)
     {
         icons[i].mass = m;
     }
 
+    /**
+     * @brief Add a new icon to the list of icons
+     *
+     * @param e movingEntity_2D object that contains the information of the icon
+     */
     void addObject(const movingEntity_2D &e)
     {
         icons.push_back(e);
         iconCount++;
     }
 
+    /**
+     * @brief Updates all the icons in the desktop with the new positions that their velocities dictates
+     */
     void update()
     {
         for (int i = 0; i < iconCount; i++)
@@ -138,6 +181,9 @@ public:
         }
     }
 
+    /**
+     * @brief Calculates the physics of all icons in the desktop
+     */
     void physics()
     {
         movingEntity_2D entity1, entity2;
@@ -190,6 +236,9 @@ public:
         }
     }
 
+    /**
+     * @brief Some things that have to be done to the desktop to work properly
+     */
     void doNeeds()
     {
         VirtualFreeEx(he, pC, 0, MEM_RELEASE);
@@ -214,11 +263,15 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,
     }
 }
 
+/**
+ * @brief Gets the origin coords or (0, 0) of the whole environment
+ */
 void getOriginCoords()
 {
     EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 }
 
+const char *cfg_path = "config.json";
 int main()
 {
     loadConfig(cfg_path);
@@ -238,12 +291,13 @@ int main()
     long double velocity, angle;
     for (int i = 1; i < d.iconCount; i++)
     {
-        d.setIconPos(i, oCoords + toPolarCoords(vector_2D(random(vector_2D(-(1920 + 1080)/4, (1920 + 1080)/4)), random(vector_2D(-1080/2, 1080/2)))));
+        d.setIconPos(i, oCoords + toPolarCoords(vector_2D(random(vector_2D(-(1920 + 1080) / 4, (1920 + 1080) / 4)), random(vector_2D(-1080 / 2, 1080 / 2)))));
 
         // Smart orbit velocity calculation
         velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * (1 + random({-orbVel_modifier, orbVel_modifier}));
-        angle = (d.icons[i].pos - d.icons[0].pos).theta + PI/2;
-        if (random({-1, 1}) < 0) angle += PI;
+        angle = (d.icons[i].pos - d.icons[0].pos).theta + PI / 2;
+        if (random({-1, 1}) < 0)
+            angle += PI;
 
         d.setIconVel(i, polarForm_2D(velocity, angle));
 
