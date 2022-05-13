@@ -1,7 +1,7 @@
 /***************************************************************************
- * Vec2.h                                                                   *
+ * vector_2D.h                                                                   *
  *                                                                          *
- * Vec2 is a trivial encapsulation of 2D floating-point coordinates.        *
+ * vector_2D is a trivial encapsulation of 2D floating-point coordinates.        *
  * It has all of the obvious operators defined as functions.         *
  *                                                                          *
  * History:                                                                 *
@@ -9,17 +9,16 @@
  *   04/01/2003  Initial coding.                                            *
  *                                                                          *
  ***************************************************************************/
-#ifndef __POLARCOORDS2_INCLUDED__
-#define __POLARCOORDS2_INCLUDED__
+#ifndef __POLARFORM_2D_INCLUDED__
+#define __POLARFORM_2D_INCLUDED__
 
 #include <iostream>
-#include <string>
 #include <cmath>
-#include "Vec2.h"
+#include "vector_2D.h"
 
-long double polarCoords2_PI = atan(1) * 4;
+long double polarForm_2D_PI = atan(1) * 4;
 
-class polarCoords2
+class polarForm_2D
 {
 public:
     long double r, theta;
@@ -29,43 +28,43 @@ public:
         if (r < 0)
         {
             r *= -1;
-            theta = theta + polarCoords2_PI;
+            theta = theta + polarForm_2D_PI;
         }
 
-        if (theta < 0 || 2 * polarCoords2_PI < theta)
+        if (theta < 0 || 2 * polarForm_2D_PI < theta)
         {
-            int nTurns = (int)(theta / (2 * polarCoords2_PI));
-            theta = theta - nTurns * 2 * polarCoords2_PI;
+            int nTurns = (int)(theta / (2 * polarForm_2D_PI));
+            theta = theta - nTurns * 2 * polarForm_2D_PI;
 
             if (theta < 0)
             {
-                theta += 2 * polarCoords2_PI;
+                theta += 2 * polarForm_2D_PI;
             }
         }
     }
 
-    inline polarCoords2()
+    inline polarForm_2D()
     {
         r = 0;
         theta = 0;
         correct();
     }
 
-    inline polarCoords2(long double rN, long double thetaN)
+    inline polarForm_2D(long double rN, long double thetaN)
     {
         r = rN;
         theta = thetaN;
         correct();
     }
 
-    inline polarCoords2(const polarCoords2 &other)
+    inline polarForm_2D(const polarForm_2D &other)
     {
         r = other.r;
         theta = other.theta;
         correct();
     }
 
-    inline polarCoords2 operator=(const polarCoords2 &other)
+    inline polarForm_2D operator=(const polarForm_2D &other)
     {
         r = other.r;
         theta = other.theta;
@@ -73,119 +72,119 @@ public:
         return *this;
     }
 
-    inline polarCoords2 operator-()
+    inline polarForm_2D operator-()
     {
-        theta = theta + polarCoords2_PI;
+        theta = theta + polarForm_2D_PI;
         correct();
         return *this;
     }
 
-    inline polarCoords2 operator+(const polarCoords2 &other) const
+    inline polarForm_2D operator+(const polarForm_2D &other) const
     {
-        polarCoords2 result(*this);
+        polarForm_2D result(*this);
         result.r = sqrt(pow(r, 2) + 2 * r * other.r * cos(other.theta - theta) + pow(other.r, 2));
         result.theta = theta + atan2((other.r * sin(other.theta - theta)), (r + other.r * cos(other.theta - theta)));
         result.correct();
         return result;
     }
 
-    inline polarCoords2 operator-(const polarCoords2 &other) const
+    inline polarForm_2D operator-(const polarForm_2D &other) const
     {
         return operator+(other * -1);
     }
 
-    inline polarCoords2 operator*(long double scalar) const
+    inline polarForm_2D operator*(long double scalar) const
     {
-        return polarCoords2(r * scalar, theta);
+        return polarForm_2D(r * scalar, theta);
     }
 
-    inline polarCoords2 operator*(const polarCoords2 &other) const
+    inline polarForm_2D operator*(const polarForm_2D &other) const
     {
-        return polarCoords2(r * other.r, theta + other.theta);
+        return polarForm_2D(r * other.r, theta + other.theta);
     }
 
-    inline polarCoords2 operator/(long double scalar) const
+    inline polarForm_2D operator/(long double scalar) const
     {
-        return polarCoords2(r / scalar, theta);
+        return polarForm_2D(r / scalar, theta);
     }
 
-    inline polarCoords2 operator/(const polarCoords2 &other) const
+    inline polarForm_2D operator/(const polarForm_2D &other) const
     {
-        return polarCoords2(r / other.r, theta - other.theta);
+        return polarForm_2D(r / other.r, theta - other.theta);
     }
 
-    inline polarCoords2 operator+=(const polarCoords2 &other)
+    inline polarForm_2D operator+=(const polarForm_2D &other)
     {
         *this = *this + other;
         return *this;
     }
 
-    inline polarCoords2 operator-=(const polarCoords2 &other)
+    inline polarForm_2D operator-=(const polarForm_2D &other)
     {
         *this = *this - other;
         return *this;
     }
 
-    inline polarCoords2 operator*=(long double scalar)
+    inline polarForm_2D operator*=(long double scalar)
     {
         *this = *this * scalar;
         return *this;
     }
 
-    inline polarCoords2 operator*=(const polarCoords2 &other)
+    inline polarForm_2D operator*=(const polarForm_2D &other)
     {
         *this = *this * other;
         return *this;
     }
 
-    inline polarCoords2 operator/=(long double scalar)
+    inline polarForm_2D operator/=(long double scalar)
     {
         *this = *this / scalar;
         return *this;
     }
 
-    inline polarCoords2 operator/=(const polarCoords2 &other)
+    inline polarForm_2D operator/=(const polarForm_2D &other)
     {
         *this = *this / other;
         return *this;
     }
 
-    inline bool operator==(const polarCoords2 &other) const
+    inline bool operator==(const polarForm_2D &other) const
     {
         return (r == other.r) && (theta == other.theta);
     }
 
-    inline bool operator!=(const polarCoords2 &other) const
+    inline bool operator!=(const polarForm_2D &other) const
     {
         return (r != other.r) || (theta != other.theta);
     }
 
-    inline bool operator<(const polarCoords2 &other) const
+    inline bool operator<(const polarForm_2D &other) const
     {
         return (r < other.r) || ((r == other.r) && (theta < other.theta));
     }
 
-    inline bool operator>(const polarCoords2 &other) const
+    inline bool operator>(const polarForm_2D &other) const
     {
         return (r > other.r) || ((r == other.r) && (theta > other.theta));
     }
 
-    inline bool operator<=(const polarCoords2 &other) const
+    inline bool operator<=(const polarForm_2D &other) const
     {
         return (r <= other.r) || ((r == other.r) && (theta <= other.theta));
     }
 
-    inline bool operator>=(const polarCoords2 &other) const
+    inline bool operator>=(const polarForm_2D &other) const
     {
         return (r >= other.r) || ((r == other.r) && (theta >= other.theta));
     }
 
-    friend std::ostream &operator<<(std::ostream &out, const polarCoords2 &other);
+    friend std::ostream &operator<<(std::ostream &out, const polarForm_2D &other);
 };
 
-std::ostream &operator<<(std::ostream &out, const polarCoords2 &other)
+std::ostream &operator<<(std::ostream &out, const polarForm_2D &other)
 {
-    out << "(" << other.r << "|" << other.theta * 180 / polarCoords2_PI << " o)";
+    out << "(" << other.r << "|" << other.theta * 180 / polarForm_2D_PI << " o)";
     return out;
 }
 
