@@ -47,7 +47,7 @@ bool loadJson(json &json_data, const char *fileName)
 }
 
 long double PI;
-long double maxVel;
+long double orbVel_modifier;
 long double G;      // Gravitational constant
 long double hitBox; // Hit box size
 polarCoords2 oCoords;
@@ -64,7 +64,7 @@ bool loadConfig(const char *cfg_path)
         cout << "Config loaded successfully." << endl;
 
         PI = atan(1) * 4;
-        maxVel = cfg["maxVel"];
+        orbVel_modifier = cfg["orbVel_modifier"];
         G = cfg["G_const"];
         hitBox = cfg["hitBox"];
         oCoords = toPolarCoords(Vec2(cfg["oCoords"][0], cfg["oCoords"][1]));
@@ -103,14 +103,14 @@ public:
     movingEntity()
     {
         pos = offset;
-        vel = polarCoords2(random(Vec2(-maxVel, maxVel)), random(Vec2(-maxVel, maxVel)));
+        vel = polarCoords2(0, 0);
         mass = random(massRange);
     }
 
     movingEntity(polarCoords2 p)
     {
         pos = p;
-        vel = polarCoords2(random(Vec2(-maxVel, maxVel)), random(Vec2(-maxVel, maxVel)));
+        vel = polarCoords2(0, 0);
         mass = random(massRange);
     }
 
@@ -370,10 +370,10 @@ int main()
 
     for (int i = 1; i < d.iconCount; i++)
     {
-        d.moveIcon(i, oCoords + toPolarCoords(Vec2(random(Vec2(-1920/2, 1920/2)), random(Vec2(-1080/2, 1080/2)))));
+        d.moveIcon(i, oCoords + toPolarCoords(Vec2(random(Vec2(-(1920 + 1080)/4, (1920 + 1080)/4)), random(Vec2(-1080/2, 1080/2)))));
 
         // Smart orbit velocity calculation
-        long double velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * 100;
+        long double velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * (1 + random({-orbVel_modifier, orbVel_modifier}));
         long double angle = (d.icons[i].pos - d.icons[0].pos).theta + PI/2;
         if (random({-1, 1}) < 0) angle += PI;
 
