@@ -15,7 +15,7 @@ long double vector_2D_PI = atan(1) * 4;
 
 /**
  * @brief vector_2D is a trivial encapsulation of 2D floating-point coordinates.
- * 
+ *
  * @param x Is the X coordinate of the vector
  * @param y Is the Y coordinate of the vector
  */
@@ -35,7 +35,7 @@ public:
 
     /**
      * @brief Construct a new vector_2D object
-     * 
+     *
      * @param x Is the X coordinate of the vector
      * @param y Is the Y coordinate of the vector
      */
@@ -47,7 +47,7 @@ public:
 
     /**
      * @brief Returns the module of the vector
-     * 
+     *
      * @return long double
      */
     inline long double module() const
@@ -57,9 +57,9 @@ public:
 
     /**
      * @brief Returns the distance between two vectors
-     * 
+     *
      * @param other The second vector to compare with
-     * @return long double 
+     * @return long double
      */
     inline long double distance(const vector_2D &other) const
     {
@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief Returns the angle of the vector
-     * 
+     *
      * @return long double
      */
     inline long double angle() const
@@ -78,7 +78,7 @@ public:
 
     /**
      * @brief Returns the angle between two vectors
-     * 
+     *
      * @param other The second vector to compare with
      * @return long double
      */

@@ -15,7 +15,7 @@ long double polarForm_2D_PI = atan(1) * 4;
 
 /**
  * @brief polarForm_2D is a trivial encapsulation of 2D floating-point coordinates.
- * 
+ *
  * @param r Is the length of the segment
  * @param theta Is the angle of the segment
  */
@@ -59,7 +59,7 @@ public:
 
     /**
      * @brief Construct a new polarForm_2D object
-     * 
+     *
      * @param r Is the length of the segment
      * @param theta Is the angle of the segment
      */
@@ -72,7 +72,7 @@ public:
 
     /**
      * @brief Copy constructor from another polarForm_2D object
-     * 
+     *
      * @param other The polarForm_2D object to copy from
      */
     inline polarForm_2D(const polarForm_2D &other)
