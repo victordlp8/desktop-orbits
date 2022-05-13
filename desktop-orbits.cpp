@@ -54,6 +54,7 @@ polarCoords2 oCoords;
 polarCoords2 offset;
 Vec2 massRange;
 long double massSun;
+int physics_per_second;
 
 const char *cfg_path = "config.json";
 bool loadConfig(const char *cfg_path)
@@ -73,6 +74,8 @@ bool loadConfig(const char *cfg_path)
 
         massRange = Vec2(cfg["massRange"][0], cfg["massRange"][1]);
         massSun = cfg["massSun"];
+
+        physics_per_second = cfg["physics_per_second"];
 
         return true;
     }
@@ -138,14 +141,14 @@ public:
         vel = v;
     }
 
-    void pushAcceleration(polarCoords2 acceleration, long double dt = 1)
+    void pushAcceleration(polarCoords2 acceleration)
     {
-        vel += acceleration * dt;
+        vel += acceleration;
     }
 
-    void pushForce(polarCoords2 force, long double dt = 1)
+    void pushForce(polarCoords2 force)
     {
-        vel += force * dt / mass;
+        vel += force / mass;
     }
 
     // long double bounceAngle(const movingEntity &other) const
@@ -270,7 +273,7 @@ public:
         }
     }
 
-    void physics(long double dt = 1)
+    void physics()
     {
         for (int i = 0; i < iconCount; i++)
         {
@@ -287,7 +290,7 @@ public:
                     if ((entity1.pos - entity2.pos).r >= 2 * hitBox)
                     {
                         polarCoords2 force = gravity(entity1, entity2);
-                        entity1.pushForce(force, dt);
+                        entity1.pushForce(force);
                     }
                     else
                     {
@@ -388,7 +391,7 @@ int main()
 
         d.update();
 
-        Sleep(10);
+        Sleep(1000 / physics_per_second);
     }
 
     d._VirtualFreeEx();

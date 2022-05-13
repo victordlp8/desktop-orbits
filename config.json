@@ -1,4 +1,5 @@
 {
+    "physics_per_second": 120,
     "orbVel_modifier": 0.1,
     "G_const": -0.00005170079,
     "hitBox": 10,
