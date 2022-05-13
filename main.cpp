@@ -138,9 +138,14 @@ public:
         vel = v;
     }
 
-    void push(polarCoords2 aceleration, long double dt = 1)
+    void pushAcceleration(polarCoords2 acceleration, long double dt = 1)
     {
-        vel += aceleration * dt;
+        vel += acceleration * dt;
+    }
+
+    void pushForce(polarCoords2 force, long double dt = 1)
+    {
+        vel += force * dt / mass;
     }
 
     // long double bounceAngle(const movingEntity &other) const
@@ -281,8 +286,8 @@ public:
                     movingEntity entity2 = icons[j];
                     if ((entity1.pos - entity2.pos).r >= 2 * hitBox)
                     {
-                        polarCoords2 aceleration = gravity(entity1, entity2);
-                        entity1.push(aceleration, dt);
+                        polarCoords2 force = gravity(entity1, entity2);
+                        entity1.pushForce(force, dt);
                     }
                     else
                     {
