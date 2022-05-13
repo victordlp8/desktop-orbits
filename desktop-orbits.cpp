@@ -275,6 +275,7 @@ public:
 
     void physics()
     {
+        movingEntity entity1, entity2;
         for (int i = 0; i < iconCount; i++)
         {
             for (int j = 0; j < iconCount; j++)
@@ -285,8 +286,8 @@ public:
                 }
                 else if (i != j)
                 {
-                    movingEntity entity1 = icons[i];
-                    movingEntity entity2 = icons[j];
+                    entity1 = icons[i];
+                    entity2 = icons[j];
                     if ((entity1.pos - entity2.pos).r >= 2 * hitBox)
                     {
                         polarCoords2 force = gravity(entity1, entity2);
@@ -371,13 +372,14 @@ int main()
     cout << "offset: " << offset << endl;
     cout << "--------------------------------------------" << endl;
 
+    long double velocity, angle;
     for (int i = 1; i < d.iconCount; i++)
     {
         d.moveIcon(i, oCoords + toPolarCoords(Vec2(random(Vec2(-(1920 + 1080)/4, (1920 + 1080)/4)), random(Vec2(-1080/2, 1080/2)))));
 
         // Smart orbit velocity calculation
-        long double velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * (1 + random({-orbVel_modifier, orbVel_modifier}));
-        long double angle = (d.icons[i].pos - d.icons[0].pos).theta + PI/2;
+        velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * (1 + random({-orbVel_modifier, orbVel_modifier}));
+        angle = (d.icons[i].pos - d.icons[0].pos).theta + PI/2;
         if (random({-1, 1}) < 0) angle += PI;
 
         d.velIcon(i, polarCoords2(velocity, angle));
