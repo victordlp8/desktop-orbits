@@ -6,6 +6,7 @@
 #include <fstream>
 #include <time.h>
 #include <cmath>
+#include <random>
 #include "include/polarCoords2.h"
 #include "include/Vec2.h"
 #include "include/json.hpp"
@@ -52,6 +53,7 @@ long double hitBox; // Hit box size
 polarCoords2 oCoords;
 polarCoords2 offset;
 Vec2 massRange;
+long double massSun;
 
 const char *cfg_path = "config.json";
 bool loadConfig(const char *cfg_path)
@@ -70,6 +72,7 @@ bool loadConfig(const char *cfg_path)
 
 
         massRange = Vec2(cfg["massRange"][0], cfg["massRange"][1]);
+        massSun = cfg["massSun"];
 
         return true;
     }
@@ -80,15 +83,13 @@ bool loadConfig(const char *cfg_path)
     }
 }
 
-int random(Vec2 minMax) // range : [min, max]
+random_device rd;  // Will be used to obtain a seed for the random number engine
+mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+long double random(Vec2 minMax) // range : [min, max]
 {
-    static bool first = true;
-    if (first)
-    {
-        srand(time(NULL)); // seeding for the first time only!
-        first = false;
-    }
-    return minMax.x + rand() % (((int)minMax.y + 1) - (int)minMax.x);
+    uniform_real_distribution<long double> dis(minMax.x, minMax.y);
+    gen.seed(time(NULL) + rand());
+    return dis(gen);
 }
 
 class movingEntity
@@ -353,29 +354,35 @@ int main()
 
     desktop d;
 
+    d.moveIcon(0, oCoords);
+    d.massIcon(0, massSun);
+
     cout << "--------------------------------------------" << endl;
     cout << "Icon count: " << d.iconCount << endl;
     cout << "oCoords: " << oCoords << endl;
     cout << "offset: " << offset << endl;
     cout << "--------------------------------------------" << endl;
 
-    for (int i = 0; i < d.iconCount; i++)
+    for (int i = 1; i < d.iconCount; i++)
     {
         // d.moveIcon(i, oCoords + offset + toPolarCoords(Vec2(random(Vec2(0, 1920)), random(Vec2(0, 1080)))));
         d.moveIcon(i, oCoords + toPolarCoords(Vec2(random(Vec2(-1920/2, 1920/2)), random(Vec2(-1080/2, 1080/2)))));
-        d.velIcon(i, toPolarCoords(Vec2(random(Vec2(-1000, 1000))/1000, random(Vec2(-1000, 1000))/1000)));
+
+        // Smart orbit velocity calculation
+        long double velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * 150;
+        if (random({-1, 1}) < 0) velocity *= -1;
+        long double angle = (d.icons[i].pos - d.icons[0].pos).theta + PI/2;
+
+        d.velIcon(i, polarCoords2(velocity, angle));
 
         // d.setIconPos(i, Vec2(1920/2 + oCoords.x + offset.x + i * 50, 1080/2 + oCoords.y + offset.y + i * 30));
         // d.setIconPos(i, offset);
     }
     d.update();
 
-    d.moveIcon(0, oCoords);
-    d.massIcon(0, massRange.y);
-
     while (true)
     {
-        d.velIcon(0, toPolarCoords(Vec2(0, 0)));
+        d.velIcon(0, polarCoords2(0, 0));
         d.physics();
 
         d.update();
