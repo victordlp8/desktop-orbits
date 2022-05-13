@@ -1,12 +1,8 @@
 /***************************************************************************
- * vector_2D.h                                                                   *
+ * polarForm_2D.h                                                           *
  *                                                                          *
- * vector_2D is a trivial encapsulation of 2D floating-point coordinates.        *
- * It has all of the obvious operators defined as functions.         *
- *                                                                          *
- * History:                                                                 *
- *   10/04/2009  Updated for use in CS112.                                  *
- *   04/01/2003  Initial coding.                                            *
+ * polarForm_2D is a trivial encapsulation of a segment and an angle.       *
+ * It has all of the obvious operators defined as functions.                *
  *                                                                          *
  ***************************************************************************/
 #ifndef __POLARFORM_2D_INCLUDED__
@@ -14,15 +10,23 @@
 
 #include <iostream>
 #include <cmath>
-#include "vector_2D.h"
 
 long double polarForm_2D_PI = atan(1) * 4;
 
+/**
+ * @brief polarForm_2D is a trivial encapsulation of 2D floating-point coordinates.
+ * 
+ * @param r Is the length of the segment
+ * @param theta Is the angle of the segment
+ */
 class polarForm_2D
 {
 public:
     long double r, theta;
 
+    /**
+     * @brief Gets rid of the minuses and ensures that the angle is between 0 and 2 PI
+     */
     void correct()
     {
         if (r < 0)
@@ -43,6 +47,9 @@ public:
         }
     }
 
+    /**
+     * @brief Construct a new polarForm_2D object
+     */
     inline polarForm_2D()
     {
         r = 0;
@@ -50,6 +57,12 @@ public:
         correct();
     }
 
+    /**
+     * @brief Construct a new polarForm_2D object
+     * 
+     * @param r Is the length of the segment
+     * @param theta Is the angle of the segment
+     */
     inline polarForm_2D(long double rN, long double thetaN)
     {
         r = rN;
@@ -57,6 +70,11 @@ public:
         correct();
     }
 
+    /**
+     * @brief Copy constructor from another polarForm_2D object
+     * 
+     * @param other The polarForm_2D object to copy from
+     */
     inline polarForm_2D(const polarForm_2D &other)
     {
         r = other.r;
