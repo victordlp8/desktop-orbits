@@ -6,5 +6,6 @@
     "oCoords": [1, 0],
     "offset": [-24, -28],
     "massRange": [1.84741075918, 47727.5012569],
-    "massSun": 5e+7
+    "massSun": 5e+7,
+    "system_size": [1080, 1080]
 }

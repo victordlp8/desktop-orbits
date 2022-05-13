@@ -20,6 +20,7 @@ polarForm_2D offset;         // Offset that a icon has between its (0, 0) and it
 vector_2D massRange;         // The range of mass that the icons should have
 long double massSun;         // Mass of the center icon icon
 int physics_per_second;      // How many times the physics should be calculated in a second
+vector_2D system_size;       // Size of the system that the icons should spawn in (in pixels) and centered on the origin point
 
 /**
  * @brief Loads the data from the config into the variables
@@ -45,6 +46,8 @@ bool loadConfig(const char *cfg_path)
         massSun = cfg["massSun"];
 
         physics_per_second = cfg["physics_per_second"];
+
+        system_size = {cfg["system_size"][0], cfg["system_size"][1]};
 
         return true;
     }
@@ -291,7 +294,7 @@ int main()
     long double velocity, angle;
     for (int i = 1; i < d.iconCount; i++)
     {
-        d.setIconPos(i, oCoords + toPolarCoords(vector_2D(random(vector_2D(-(1920 + 1080) / 4, (1920 + 1080) / 4)), random(vector_2D(-1080 / 2, 1080 / 2)))));
+        d.setIconPos(i, oCoords + toPolarCoords({random({-system_size.x / 2, system_size.x / 2}), random({-system_size.y / 2, system_size.y / 2})}));
 
         // Smart orbit velocity calculation
         velocity = sqrt(-(G * d.icons[0].mass / (d.icons[i].pos - d.icons[0].pos).r)) * (1 + random({-orbVel_modifier, orbVel_modifier}));
