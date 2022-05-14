@@ -17,9 +17,10 @@ This project uses the following public code:
 
 ## Installation
 1. Unlock desktop icons. [Quick tutorial if you don't know how]
-2. Download the *_READY.zip file on the version release of your choice.
+2. Download the *_READY.zip file on the version release of your choice. [Here are all the releases]
 3. Unzip the file and execute the executable.
-4. Your central icon may not be in the center of your main screen, you can modify the 'offset' parameter in the config file to get it to wherever you want it.
+
+Your central icon may not be in the center of your main screen, you can modify the 'offset' parameter in the config file to get it to wherever you want it.
 Remember that the top left corner of your most top left screen is coordinates (0, 0) increasing as you move away from that point.
 
 ## Config
@@ -33,3 +34,4 @@ You can tinker with the configuration as you wish but it can maybe mess your ico
    [nlohmann/json]: <https://github.com/nlohmann/json>
    [Quick tutorial if you don't know how]: <https://bit.ly/3wuATdM>
    [MIT License]: <https://choosealicense.com/licenses/mit/>
+   [Here are all the releases]: <https://github.com/victordlp8/desktop-orbits/releases>
