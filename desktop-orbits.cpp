@@ -11,16 +11,17 @@
 
 using namespace std;
 
-long double PI;              // PI constant
-long double orbVel_modifier; // This is a percentual modifier for the orbital velocity
-long double G;               // Gravitational constant
-long double hitBox;          // Hitbox size
-polarForm_2D oCoords;        // Origin coordinates (center of the main screen)
-polarForm_2D offset;         // Offset that a icon has between its (0, 0) and its center
-vector_2D massRange;         // The range of mass that the icons should have
-long double massSun;         // Mass of the center icon icon
-int physics_per_second;      // How many times the physics should be calculated in a second
-vector_2D system_size;       // Size of the system that the icons should spawn in (in pixels) and centered on the origin point
+long double PI;                 // PI constant
+long double orbVel_modifier;    // This is a percentual modifier for the orbital velocity
+long double G;                  // Gravitational constant
+long double hitBox;             // Hitbox size
+polarForm_2D oCoords;           // Origin coordinates (center of the main screen)
+polarForm_2D offset;            // Offset that a icon has between its (0, 0) and its center
+vector_2D massRange;            // The range of mass that the icons should have
+long double massSun;            // Mass of the center icon icon
+int physics_per_second;         // How many times the physics should be calculated in a second
+vector_2D system_size;          // Size of the system that the icons should spawn in (in pixels) and centered on the origin point
+bool background_optimization;   // If true, the background will be optimized to not update graphically the icons
 
 /**
  * @brief Loads the data from the config into the variables
@@ -48,6 +49,7 @@ bool loadConfig(const char *cfg_path)
         physics_per_second = cfg["physics_per_second"];
 
         system_size = {cfg["system_size"][0], cfg["system_size"][1]};
+        background_optimization = cfg["background_optimization"];
 
         return true;
     }
@@ -122,10 +124,11 @@ public:
      *
      * @param i Index of the icon
      */
-    void moveIcon(int i)
+    void moveIcon(int i, bool graphicsUpdate)
     {
         icons[i].pos += icons[i].vel;
-        _ListView_SetItemPosition(i, icons[i].pos);
+        if (graphicsUpdate)
+            _ListView_SetItemPosition(i, icons[i].pos);
     }
 
     /**
@@ -176,11 +179,11 @@ public:
     /**
      * @brief Updates all the icons in the desktop with the new positions that their velocities dictates
      */
-    void update()
+    void update(bool graphicsUpdate = background_optimization)
     {
         for (int i = 0; i < iconCount; i++)
         {
-            moveIcon(i);
+            moveIcon(i, graphicsUpdate);
         }
     }
 
@@ -314,7 +317,7 @@ int main()
         d.setIconVel(0, polarForm_2D(0, 0));
         d.physics();
 
-        d.update();
+        d.update((background_optimization || (GetShellWindow() == GetForegroundWindow())));
 
         Sleep(1000 / physics_per_second);
     }
