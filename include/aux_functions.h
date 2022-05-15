@@ -35,23 +35,15 @@ inline vector_2D tovector_2D(const polarForm_2D &other)
  * @brief Loads a json file and returns a json object
  *
  * @param json_data in/out json object
- * @param fileName name of the file that contains the json data
+ * @param filePath name of the file that contains the json data
  * @return true/false depending if the reading is successful
  */
-bool loadJson(json &json_data, const char *fileName)
+bool loadJson(json &json_data, const char *filePath)
 {
-    ifstream json_file(fileName);
-    string json_string, line;
+    ifstream json_file(filePath);
     if (json_file.is_open())
     {
-        while (getline(json_file, line))
-        {
-            json_string += line + '\n';
-        }
-        json_file.close();
-
-        json_data = json::parse(json_string);
-
+        json_file >> json_data;
         return true;
     }
     else
