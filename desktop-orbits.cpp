@@ -60,6 +60,27 @@ bool loadConfig(const char *cfg_path)
     }
 }
 
+json key_config; // The key configuration
+/**
+ * @brief Loads the data from the key config to the key_config variable
+ *
+ * @param cfg_path
+ * @return true/false depending on whether the data was loaded successfully or not
+ */
+bool loadKeyConfig(const char *cfg_path)
+{
+    if (loadJson(key_config, cfg_path))
+    {
+        cout << "Key config loaded successfully." << endl;
+        return true;
+    }
+    else
+    {
+        cout << "Key config loading failed." << endl;
+        return false;
+    }
+}
+
 /**
  * @brief Calculates the gravity force between to movingEntity_2D objects
  *
@@ -279,9 +300,11 @@ void getOriginCoords()
 }
 
 const char *cfg_path = "config.json";
+const char *key_cfg_path = "key_config.json";
 int main()
 {
     loadConfig(cfg_path);
+    loadKeyConfig(key_cfg_path);
 
     getOriginCoords();
     desktop d;
@@ -314,6 +337,18 @@ int main()
 
     while (true)
     {
+        if (GetAsyncKeyState(VK_SHIFT) & 0x8000 && GetAsyncKeyState(VK_MENU) & 0x8000)
+        {
+            if (GetAsyncKeyState(string(key_config["exit"])[0]) & 0x8000)
+            {
+                break;
+            }
+            else if (GetAsyncKeyState(string(key_config["toggle_background_optimization"])[0]) & 1)
+            {
+                background_optimization = !background_optimization;
+            }
+        }
+
         d.setIconVel(0, polarForm_2D(0, 0));
         d.physics();
 
