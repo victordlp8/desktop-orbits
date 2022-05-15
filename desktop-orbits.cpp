@@ -34,8 +34,6 @@ bool loadConfig(const char *cfg_path)
     json cfg;
     if (loadJson(cfg, cfg_path))
     {
-        cout << "Config loaded successfully." << endl;
-
         PI = atan(1) * 4;
         orbVel_modifier = cfg["orbVel_modifier"];
         G = cfg["G_const"];
@@ -51,6 +49,7 @@ bool loadConfig(const char *cfg_path)
         system_size = {cfg["system_size"][0], cfg["system_size"][1]};
         background_optimization = cfg["background_optimization"];
 
+        cout << "Config loaded successfully." << endl;
         return true;
     }
     else
@@ -69,6 +68,7 @@ json key_config; // The key configuration
  */
 bool loadKeyConfig(const char *cfg_path)
 {
+    json::error_handler_t::ignore;
     if (loadJson(key_config, cfg_path))
     {
         cout << "Key config loaded successfully." << endl;
@@ -303,8 +303,10 @@ const char *cfg_path = "config.json";
 const char *key_cfg_path = "key_config.json";
 int main()
 {
-    loadConfig(cfg_path);
-    loadKeyConfig(key_cfg_path);
+    if (!loadConfig(cfg_path) || !loadKeyConfig(key_cfg_path))
+    {
+        return 1;
+    }
 
     getOriginCoords();
     desktop d;
@@ -343,9 +345,10 @@ int main()
             {
                 break;
             }
-            else if (GetAsyncKeyState(string(key_config["toggle_background_optimization"])[0]) & 1)
+            else if (GetAsyncKeyState(string(key_config["toggle_background_optimization"])[0]) & 0x8000)
             {
                 background_optimization = !background_optimization;
+                Sleep(100);
             }
         }
 
